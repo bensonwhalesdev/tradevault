@@ -4,6 +4,7 @@ import { IContext } from '../context';
 import { UserInputError } from 'apollo-server-micro'; 
 import User from '../../../models/user.model';
 import Wallet from '../../../models/wallet.model'
+import { connectDB } from '@/app/api/utils/connectdb';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'thisisaseceret';
 
@@ -26,6 +27,7 @@ export const userResolvers = {
 
   Mutation: {
     register: async (_: any, { email, password, fullName }: any ) => {
+      await connectDB()
       const existingUser = await User.findOne({ email });
       if (existingUser) {
         throw new UserInputError('Email already in use.');
@@ -49,6 +51,7 @@ export const userResolvers = {
     },
 
     login: async (_: any, { email, password }: any ) => {
+      await connectDB()
       const user = await User.findOne({ email });
       if (!user) {
         throw new UserInputError('Invalid credentials.');
