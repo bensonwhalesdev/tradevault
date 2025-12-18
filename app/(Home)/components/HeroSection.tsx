@@ -95,16 +95,16 @@ export default function HeroSection() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-10 justify-center lg:justify-start">
-              <Link href="/signup" className="sm:w-auto">
+              <Link href="/register" className="sm:w-auto">
                 <button
-                  className="w-full px-10 py-3.5 rounded-md text-black font-bold transition hover:scale-105 active:scale-95"
+                  className="w-full px-10 py-3.5 rounded-md text-black font-bold transition hover:scale-105 active:scale-95 cursor-pointer"
                   style={{ background: SIGNUP_COLOR }}
                 >
                   Sign Up
                 </button>
               </Link>
-              <Link href="/demo" className="sm:w-auto">
-                <button className="w-full px-10 py-3.5 rounded-md bg-transparent text-white font-bold border border-gray-700 hover:bg-white/5 transition active:scale-95">
+              <Link href="/register" className="sm:w-auto">
+                <button className="w-full px-10 py-3.5 rounded-md bg-transparent text-white font-bold border border-gray-700 hover:bg-white/5 transition active:scale-95 cursor-pointer">
                   Try Demo
                 </button>
               </Link>

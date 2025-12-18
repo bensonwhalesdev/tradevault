@@ -9,8 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@apollo/client": "^4.0.11",
     "@apollo/server": "^5.2.0",
     "@as-integrations/next": "^4.1.0",
+    "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-slot": "^1.2.4",
     "apollo-server-micro": "^3.13.0",
     "bcryptjs": "^3.0.3",
@@ -18,6 +20,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
     "graphql-tag": "^2.12.6",
+    "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.3",
     "lightweight-charts": "^5.1.0",
     "lucide-react": "^0.556.0",
@@ -25,10 +28,14 @@
     "next": "16.0.7",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "tailwind-merge": "^3.4.0"
+    "react-hook-form": "^7.68.0",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.4.0",
+    "zod": "^4.2.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/js-cookie": "^3.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
