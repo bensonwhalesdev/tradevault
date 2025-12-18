@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import type { NextRequest } from "next/server";
 import { resolvers } from "./schemas/resolvers";
 import typeDefs from "./schemas/typeDefs/typeDefs";
+import { IAuthPayload } from "./schemas/context";
 
 
 const apolloServer = new ApolloServer({
@@ -11,14 +12,14 @@ const apolloServer = new ApolloServer({
   resolvers,
 });
 
-const verifyToken = (token: string) => {
+const verifyToken = (token: string): IAuthPayload | null => {
   try {
     const cleanToken = token.replace("Bearer ", "");
     const decoded = jwt.verify(
       cleanToken,
       process.env.NEXT_JWT_SECRET as string
     );
-    return decoded; // { id, iat, exp }
+    return decoded as IAuthPayload; // { id, iat, exp }
   } catch (error: any) {
     if (error.name === "TokenExpiredError") {
       console.warn("JWT expired at:", error.expiredAt);

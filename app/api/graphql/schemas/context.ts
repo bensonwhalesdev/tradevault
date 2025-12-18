@@ -1,8 +1,6 @@
-// Define the structure of the context object that your Apollo handler returns.
-// The 'user' property here corresponds to the 'return { user };' line in your route.ts.
 
 // Interface for the decoded JWT payload
-interface IAuthPayload {
+export interface IAuthPayload {
   userId: string; // Assuming your JWT payload has a field named 'userId'
   email: string; // Add other properties you might need
   iat: number; // Issued at timestamp
