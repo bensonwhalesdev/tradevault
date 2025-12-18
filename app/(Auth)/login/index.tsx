@@ -163,7 +163,7 @@ export default function LoginComponent() {
 
           <div className="mt-12 text-center">
             <p className="text-sm text-gray-500 mb-6">New to the platform?</p>
-            <Link href="/auth?mode=register">
+            <Link href="/register">
                 <Button variant="outline" className="w-full border-white/10 bg-transparent text-white rounded-xl h-12 uppercase text-[10px] tracking-[0.2em] font-bold cursor-pointer">
                     Create An Account
                 </Button>

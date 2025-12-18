@@ -191,12 +191,12 @@ export default function RegisterComponent() {
 
           {/* Footer Social / Login */}
           <div className="mt-10">
-            <div className="relative mb-8">
+            {/* <div className="relative mb-8">
                 <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
                 <div className="relative flex justify-center text-xs uppercase"><span className="bg-[#0B1210] px-4 text-gray-600 tracking-widest">Or Register With</span></div>
-            </div>
+            </div> */}
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
+            {/* <div className="grid grid-cols-2 gap-4 mb-8">
                 <Button variant="outline" className="border-white/10 bg-transparent text-white hover:bg-white/5 rounded-xl h-12">
                     <Image src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width={18} height={18} className="mr-2" />
                     Google
@@ -205,7 +205,7 @@ export default function RegisterComponent() {
                     <Image src="https://www.svgrepo.com/show/303108/apple-black-logo.svg" alt="Apple" width={18} height={18} className="mr-2 invert" />
                     Apple
                 </Button>
-            </div>
+            </div> */}
 
             <p className="text-center text-sm text-gray-500">
                 Already have an account?{" "}
