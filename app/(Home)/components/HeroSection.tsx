@@ -57,7 +57,7 @@ const RatingCard: React.FC<RatingCardProps> = ({
 
 export default function HeroSection() {
   const HERO_BG = "#0D1A13";
-  const SIGNUP_COLOR = "linear-gradient(90deg, #D4AF77 0%, #C08E63 100%)";
+  const SIGNUP_COLOR = "#D4AF37";
 
   return (
     <section className="relative overflow-hidden mt-10 bg-white">
@@ -85,12 +85,12 @@ export default function HeroSection() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-4xl md:text-5xl lg:text-[3.8rem] font-bold leading-[1.1] mb-6 tracking-tight text-center lg:text-left">
-              Trade with a trusted <br className="hidden lg:block" /> global
+              Invest with a trusted <br className="hidden lg:block" /> global
               broker
             </h1>
 
             <p className="text-gray-400 max-w-lg mb-10 text-base md:text-lg font-light text-center lg:text-left mx-auto lg:mx-0">
-              Join a community of 787,000+ traders from around the world. Our
+              Join a community of 787,000+ investors from around the world. Our
               customers love us so much, they’ve traded over $1tn in volume.
             </p>
 
@@ -103,11 +103,11 @@ export default function HeroSection() {
                   Sign Up
                 </button>
               </Link>
-              <Link href="/register" className="sm:w-auto">
+              {/* <Link href="/register" className="sm:w-auto">
                 <button className="w-full px-10 py-3.5 rounded-md bg-transparent text-white font-bold border border-gray-700 hover:bg-white/5 transition active:scale-95 cursor-pointer">
                   Try Demo
                 </button>
-              </Link>
+              </Link> */}
             </div>
 
             <p className="text-[10px] uppercase tracking-widest text-gray-500 text-center lg:text-left">

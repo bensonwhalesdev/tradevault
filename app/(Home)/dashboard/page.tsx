@@ -1,9 +1,11 @@
-import React from 'react'
+import TerminalPage from './components/Terminal'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div>
+      <TerminalPage />
+    </div>
   )
-}
+};
 
 export default page

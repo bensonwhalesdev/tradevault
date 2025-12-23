@@ -11,12 +11,31 @@ const typeDefs = gql`
   }
 
   # Tracks the user's cash balance
+  type PerformancePoint {
+    name: String!
+    value: Float!
+  }
+
+  type Allocation {
+    name: String!
+    value: Float!
+    color: String!
+  }
+
   type Wallet {
     id: ID!
     userId: ID!
     fiatBalance: Float!
-    frozenBalance: Float! # Funds reserved for open Limit Orders
+    frozenBalance: Float!
     currency: String!
+    totalValue: Float!
+    totalInvested: Float!
+    dailyChange: Float!
+    dailyChangePercent: Float!
+    monthlyProfit: Float!
+    tradesToday: Int!
+    performanceHistory: [PerformancePoint!]!
+    assetAllocation: [Allocation!]!
   }
 
   # Represents a user's holding of a specific stock or crypto
