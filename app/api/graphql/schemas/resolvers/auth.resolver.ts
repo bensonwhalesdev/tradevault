@@ -13,6 +13,7 @@ export const userResolvers = {
     me: async (_: any, __: any, context: any) => {
       try {
         await connectDB();
+        
         if (!context.user) throw new Error("Not authenticated");
         const user = await User.findById(context.user.userId);
         if (!user) throw new Error("User not found");
