@@ -6,7 +6,6 @@ import { resolvers } from "./schemas/resolvers";
 import typeDefs from "./schemas/typeDefs/typeDefs";
 import { IAuthPayload } from "./schemas/context";
 
-
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
@@ -33,7 +32,7 @@ const verifyToken = (token: string): IAuthPayload | null => {
 const apolloHandler = startServerAndCreateNextHandler(apolloServer, {
   context: async (req: NextRequest) => {
     const authHeader = req.headers.get("authorization") || "";
-    const user = authHeader ? verifyToken(authHeader) : null;
+    const user = authHeader ? verifyToken(authHeader) : undefined;
     return { user };
   },
 });
