@@ -8,7 +8,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="">
+    <div className="bg-[#0B1210]">
       <HeaderBar /> 
       {children}
       <DashboardFooter />
