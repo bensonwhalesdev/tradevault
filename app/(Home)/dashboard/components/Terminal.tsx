@@ -1,22 +1,48 @@
 "use client";
 
-import { TrendingUp, Wallet as WalletIcon, BarChart3, ArrowUpRight, ArrowLeftRight,Loader2, AlertCircle,
+import {
+  TrendingUp,
+  Wallet as WalletIcon,
+  BarChart3,
+  ArrowUpRight,
+  ArrowLeftRight,
+  Loader2,
+  AlertCircle,
+  Share2,
+  MoreHorizontal,
 } from "lucide-react";
-import { AreaChart, Area, XAxis,YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
 import { Button } from "@/components/ui/button";
 import { useWallet } from "../Hooks/useWallet";
+import { useMe } from "../Hooks/useMe";
 
-// Scoped Sub-component for stats
+// Custom Stat Card matching the image's compact style
 const StatCard = ({ icon: Icon, label, value, subtext, colorClass }: any) => (
-  <div className="bg-[#0f172a] border border-white/5 p-5 rounded-2xl flex items-center gap-4 transition-all hover:border-[#D4AF37]/30">
-    <div className={`p-3 rounded-xl ${colorClass} bg-opacity-10`}>
-      <Icon size={20} />
+  <div className="bg-[#1a1f2e] border border-white/5 p-4 rounded-2xl flex items-center gap-4 transition-all hover:border-[#D4AF37]/30 group">
+    <div
+      className={`p-2.5 rounded-xl ${colorClass} bg-opacity-20 group-hover:scale-110 transition-transform`}
+    >
+      <Icon size={18} />
     </div>
     <div className="overflow-hidden">
-      <p className="text-slate-400 text-sm font-medium truncate">{label}</p>
-      <p className="text-white text-xl font-bold">{value}</p>
+      <p className="text-slate-400 text-xs font-medium truncate uppercase tracking-wider">
+        {label}
+      </p>
+      <p className="text-white text-lg font-bold">{value}</p>
       {subtext && (
-        <p className="text-emerald-500 text-xs mt-1 font-medium">{subtext}</p>
+        <p className="text-emerald-500 text-[10px] mt-0.5 font-bold">
+          {subtext}
+        </p>
       )}
     </div>
   </div>
@@ -24,8 +50,8 @@ const StatCard = ({ icon: Icon, label, value, subtext, colorClass }: any) => (
 
 export default function InvestmentDashboard() {
   const { wallet, isLoading, error } = useWallet();
+  const { user } = useMe();
 
-  // 1. Loading State
   if (isLoading)
     return (
       <div className="min-h-screen bg-[#0B1210] flex flex-col items-center justify-center gap-4">
@@ -36,7 +62,6 @@ export default function InvestmentDashboard() {
       </div>
     );
 
-  // 2. Error or Null Wallet State (Fixes the "undefined" crash)
   if (error || !wallet)
     return (
       <div className="min-h-screen bg-[#0B1210] p-8 flex items-center justify-center">
@@ -45,187 +70,215 @@ export default function InvestmentDashboard() {
           <h3 className="text-xl font-bold text-white mb-2">
             Account Not Initialized
           </h3>
-          <p className="text-slate-400 mb-6">
-            {error
-              ? "We couldn't connect to the server."
-              : "We couldn't find a wallet associated with your account."}
-          </p>
-          <Button className="bg-[#D4AF37] text-[#0B1210] font-bold px-8">
+          <Button className="bg-[#D4AF37] text-[#0B1210] font-bold mt-4 px-8">
             Initialize Wallet
           </Button>
         </div>
       </div>
     );
 
-  // 3. Main Render (Safely accessed)
   return (
-    <div className="min-h-screen bg-[#0B1210] p-4 md:p-8 text-white font-sans max-w-[1600px] mx-auto">
-      {/* 1. Hero Section */}
-      <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-white/5 bg-[#0B1210] p-6 md:p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-        <div className="z-10">
-          <h1 className="text-slate-400 text-sm font-medium mb-2 uppercase tracking-widest">
-            Total Portfolio Value
-          </h1>
-          <div className="flex items-baseline gap-4">
-            <span className="text-4xl md:text-6xl font-black tracking-tighter">
-              $
-              {(wallet.totalValue || 0).toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-              })}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-emerald-500 mt-4 font-bold">
-            <TrendingUp size={20} />
-            <span>
-              +${(wallet.dailyChange || 0).toLocaleString()} (+
-              {wallet.dailyChangePercent || 0}%)
-              <span className="text-slate-500 font-normal ml-1">today</span>
-            </span>
+    <div className="min-h-screen bg-[#0B1210] p-4 md:p-8 text-white font-sans max-w-[1600px] mx-auto animate-in fade-in duration-500">
+      {/* 1. Top Section: Total Portfolio & Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="lg:col-span-2 bg-[#1a1f2e] border border-white/5 p-6 rounded-[2.5rem] relative overflow-hidden">
+          <div className="relative z-10">
+            <h1 className="text-slate-400 text-xs font-bold mb-2 uppercase tracking-widest opacity-70">
+              Total Portfolio Value
+            </h1>
+            <div className="flex items-center gap-3">
+              <span className="text-3xl md:text-5xl font-black tracking-tighter text-white">
+                {user?.fullName}{" "}
+                <span className="text-[#D4AF37]">Portfolio</span>
+              </span>
+            </div>
+
+            {/* Action Buttons Integrated into Top Card */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-8">
+              <StatCard
+                icon={WalletIcon}
+                label="Balance"
+                value={`$${(wallet.fiatBalance || 0).toLocaleString()}`}
+                colorClass="text-blue-400"
+              />
+              <StatCard
+                icon={BarChart3}
+                label="Invested"
+                value={`$${(wallet.totalInvested || 0).toLocaleString()}`}
+                colorClass="text-blue-500"
+              />
+              <StatCard
+                icon={TrendingUp}
+                label="Value"
+                value={`$0`}
+                colorClass="text-emerald-400"
+              />
+              <StatCard
+                icon={ArrowLeftRight}
+                label="Trades"
+                value={`+0%`}
+                colorClass="text-emerald-500"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="flex gap-3 w-full md:w-auto z-10">
-          <Button className="flex-1 md:flex-none bg-[#D4AF37] hover:bg-[#C5A030] text-[#0B1210] font-bold py-3 px-10 rounded-md transition-transform active:scale-95 cursor-pointer">
-            Deposit
-          </Button>
-          <Button
-            className="flex-1 md:flex-none bg-[#D4AF37] hover:bg-[#C5A030] text-[#0B1210] font-bold py-3 px-10 rounded-md cursor-pointer"
-          >
-            Withdraw
-          </Button>
+        {/* Right Action Card */}
+        <div className="bg-[#1a1f2e] border border-white/5 p-6 rounded-[2.5rem] flex flex-col justify-between">
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="text-white font-bold">Cash Balance</h3>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="bg-[#D4AF37]/20 p-2 rounded-lg text-[#D4AF37]">
+                  <WalletIcon size={16} />
+                </div>
+                <span className="text-xl font-bold">${wallet.fiatBalance}</span>
+              </div>
+            </div>
+            <Share2 className="text-slate-500 cursor-pointer" size={20} />
+          </div>
+          <div className="flex gap-2 mt-6">
+            <Button className="flex-1 bg-[#D4AF37] hover:bg-[#C5A030] text-[#0B1210] font-black rounded-md cursor-pointer">
+              Deposit
+            </Button>
+            <Button className="flex-1 bg-[#D4AF37] hover:bg-[#C5A030] text-[#0B1210] font-black rounded-md cursor-pointer">
+              Withdraw
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* 2. Stat Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
-        <StatCard
-          icon={WalletIcon}
-          label="Cash Balance"
-          value={`$${(wallet.fiatBalance || 0).toLocaleString()}`}
-          colorClass="text-emerald-500"
-        />
-        <StatCard
-          icon={BarChart3}
-          label="Total Invested"
-          value={`$${(wallet.totalInvested || 0).toLocaleString()}`}
-          colorClass="text-blue-500"
-        />
-        <StatCard
-          icon={ArrowUpRight}
-          label="This Month"
-          value={`+$${(wallet.monthlyProfit || 0).toLocaleString()}`}
-          subtext="+7.4%"
-          colorClass="text-[#D4AF37]"
-        />
-        <StatCard
-          icon={ArrowLeftRight}
-          label="Trades Today"
-          value={wallet.tradesToday || 0}
-          colorClass="text-purple-500"
-        />
-      </div>
-
-      {/* 3. Charts Section */}
+      {/* 2. Main Dashboard Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Performance Chart */}
-        <div className="lg:col-span-2 bg-[#0B1210] border border-white/5 p-6 md:p-8 rounded-3xl">
-          <h2 className="text-xl font-bold mb-8 flex items-center gap-2">
-            Portfolio Performance{" "}
-            <span className="text-xs font-normal text-slate-500 px-2 py-1 bg-white/5 rounded-full">
-              LIVE
-            </span>
-          </h2>
+        {/* Performance Bar Chart */}
+        <div className="lg:col-span-2 bg-[#1a1f2e] border border-white/5 p-6 md:p-10 rounded-[2.5rem]">
+          <div className="flex justify-between items-center mb-10">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <h2 className="text-2xl font-black text-white">
+                  Portfolio Performance
+                </h2>
+                <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-md">
+                  LIVE
+                </span>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="bg-emerald-400/20 text-emerald-400 text-xs px-3 py-1 rounded-full flex items-center gap-1 font-bold">
+                  <TrendingUp size={14} /> Trending Up
+                </span>
+                <span className="text-slate-400 text-xs font-medium">
+                  +$0 today
+                </span>
+              </div>
+            </div>
+            <MoreHorizontal className="text-slate-500" />
+          </div>
+
           <div className="h-[350px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={wallet.performanceHistory || []}>
-                <defs>
-                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.4} />
-                    <stop offset="95%" stopColor="#D4AF37" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
+              <BarChart
+                data={wallet.performanceHistory || []}
+                margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
+              >
                 <XAxis
                   dataKey="name"
-                  stroke="#475569"
-                  fontSize={12}
-                  tickLine={false}
                   axisLine={false}
-                  tickMargin={10}
+                  tickLine={false}
+                  tick={{ fill: "#64748b", fontSize: 11 }}
                 />
                 <YAxis
-                  stroke="#475569"
-                  fontSize={12}
-                  tickLine={false}
+                  orientation="right"
                   axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#64748b", fontSize: 11 }}
                   tickFormatter={(v) => `$${v / 1000}k`}
                 />
                 <Tooltip
+                  cursor={{ fill: "rgba(212, 175, 55, 0.05)" }}
                   contentStyle={{
                     backgroundColor: "#0B1210",
-                    border: "1px solid #334155",
+                    border: "1px solid rgba(255,255,255,0.1)",
                     borderRadius: "12px",
                   }}
                   itemStyle={{ color: "#D4AF37" }}
                 />
-                <Area
-                  type="monotone"
+                <Bar
                   dataKey="value"
-                  stroke="#D4AF37"
-                  strokeWidth={4}
-                  fillOpacity={1}
-                  fill="url(#colorValue)"
+                  fill="#D4AF37"
+                  radius={[6, 6, 0, 0]}
+                  barSize={24}
+                  animationDuration={1500}
+                  animationBegin={200}
                 />
-              </AreaChart>
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Allocation Chart */}
-        <div className="bg-[#0B1210] border border-white/5 p-6 md:p-8 rounded-3xl flex flex-col">
-          <h2 className="text-xl font-bold mb-8 text-[#D4AF37]">
-            Asset Allocation
-          </h2>
-          <div className="flex-1 flex flex-col justify-around">
-            <div className="h-[250px] w-full">
+        {/* Allocation Column */}
+        <div className="space-y-6">
+          <div className="bg-[#1a1f2e] border border-white/5 p-8 rounded-[2.5rem]">
+            <div className="flex justify-between mb-4">
+              <h2 className="text-lg font-bold text-[#D4AF37]">
+                Asset Allocation
+              </h2>
+              <MoreHorizontal className="text-slate-500" size={18} />
+            </div>
+            <div className="h-[200px] w-full relative">
+              {/* Center Label */}
+              <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                <span className="text-white text-xl font-black">Cash</span>
+              </div>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={(wallet.assetAllocation || []).map((item) => ({
-                      ...item,
-                    }))}
-                    innerRadius={70}
-                    outerRadius={90}
-                    paddingAngle={8}
+                    data={wallet.assetAllocation || []}
+                    innerRadius={65}
+                    outerRadius={85}
+                    paddingAngle={5}
                     dataKey="value"
                     stroke="none"
                   >
                     {(wallet.assetAllocation || []).map(
                       (entry: any, index: number) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={
+                            entry.color || (index === 0 ? "#4ade80" : "#3b82f6")
+                          }
+                        />
                       )
                     )}
                   </Pie>
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="w-full space-y-3 mt-6">
-              {(wallet.assetAllocation || []).map((item: any) => (
-                <div
-                  key={item.name}
-                  className="flex justify-between items-center text-sm group hover:bg-white/5 p-2 rounded-lg transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-2.5 h-2.5 rounded-full"
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <span className="text-slate-400 font-medium">
-                      {item.name}
-                    </span>
-                  </div>
-                  <span className="font-bold text-white">{item.value}%</span>
-                </div>
-              ))}
+          </div>
+
+          <div className="bg-[#1a1f2e] border border-white/5 p-8 rounded-[2.5rem]">
+            <div className="h-[150px] w-full relative">
+              <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                <span className="text-slate-500 text-[10px] uppercase font-bold">
+                  Profit Value
+                </span>
+                <span className="text-white text-lg font-black">$0</span>
+              </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[{ value: 70 }, { value: 30 }]}
+                    innerRadius={50}
+                    outerRadius={65}
+                    startAngle={90}
+                    endAngle={450}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    <Cell fill="#4ade80" />
+                    <Cell fill="#D4AF37" opacity={0.3} />
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
