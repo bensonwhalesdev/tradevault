@@ -11,7 +11,7 @@ const apolloServer = new ApolloServer({
   resolvers,
 });
 
-const verifyToken = (token: string): IAuthPayload | null => {
+const verifyToken = (token: string): IAuthPayload | undefined => {
   try {
     const cleanToken = token.replace("Bearer ", "");
     const decoded = jwt.verify(
@@ -22,10 +22,10 @@ const verifyToken = (token: string): IAuthPayload | null => {
   } catch (error: any) {
     if (error.name === "TokenExpiredError") {
       console.warn("JWT expired at:", error.expiredAt);
-      return null; // force re-login
+      return undefined; // force re-login
     }
     console.error("JWT verification failed:", error);
-    return null;
+    return undefined;
   }
 };
 

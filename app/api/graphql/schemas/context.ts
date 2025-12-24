@@ -1,7 +1,8 @@
 // Interface for the decoded JWT payload
 export interface IAuthPayload {
-  userId: string; // Assuming your JWT payload has a field named 'userId'
-  email: string; // Add other properties you might need
+  _id: string; // MongoDB user ID
+  userId: string; // User ID field
+  email?: string; // Add other properties you might need
   iat: number; // Issued at timestamp
   exp: number; // Expiration timestamp
 }

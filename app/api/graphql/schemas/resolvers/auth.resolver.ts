@@ -13,7 +13,7 @@ export const userResolvers = {
     me: async (_: any, __: any, context: any) => {
       try {
         await connectDB();
-        
+
         if (!context.user) throw new Error("Not authenticated");
         const user = await User.findById(context.user.userId);
         if (!user) throw new Error("User not found");
@@ -73,7 +73,7 @@ export const userResolvers = {
         }
 
         const token = jwt.sign(
-          { userId: user._id, email: user.email },
+          { _id: user._id, userId: user._id, email: user.email },
           JWT_SECRET,
           { expiresIn: "7d" }
         );
