@@ -87,7 +87,7 @@ export default function DashboardMarketSection() {
       </Card>
 
       {/* ACTIVITY */}
-      <Card title="Activity" icon={<History size={18} className="text-[#D4AF37]" />} >
+      <Card title="History" icon={<History size={18} className="text-[#D4AF37]" />} >
         <Transaction title="Bought BTC" date="Dec 22, 2024" amount="- $6,420" />
         <Transaction title="Sold AAPL" date="Dec 21, 2024" amount="+ $1,765" positive />
       </Card>

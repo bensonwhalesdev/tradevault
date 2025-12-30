@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useWallet } from "../Hooks/useWallet";
 import { useMe } from "../Hooks/useMe";
+import { DepositDialog } from "./DepositDialog";
 
 // Custom Stat Card matching the image's compact style
 const StatCard = ({ icon: Icon, label, value, subtext, colorClass }: any) => (
@@ -88,7 +89,7 @@ export default function InvestmentDashboard() {
             </h1>
             <div className="flex items-center gap-3">
               <span className="text-3xl md:text-5xl font-black tracking-tighter text-white">
-                {user?.fullName}{" "}
+                {user?.fullName}{"'s "}
                 <span className="text-[#D4AF37]">Portfolio</span>
               </span>
             </div>
@@ -138,9 +139,10 @@ export default function InvestmentDashboard() {
             <Share2 className="text-slate-500 cursor-pointer" size={20} />
           </div>
           <div className="flex gap-2 mt-6">
-            <Button className="flex-1 bg-[#D4AF37] hover:bg-[#C5A030] text-[#0B1210] font-black rounded-md cursor-pointer">
+            {/* <Button className="flex-1 bg-[#D4AF37] hover:bg-[#C5A030] text-[#0B1210] font-black rounded-md cursor-pointer">
               Deposit
-            </Button>
+            </Button> */}
+            <DepositDialog />
             <Button className="flex-1 bg-[#D4AF37] hover:bg-[#C5A030] text-[#0B1210] font-black rounded-md cursor-pointer">
               Withdraw
             </Button>
