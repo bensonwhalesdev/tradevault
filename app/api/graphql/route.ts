@@ -9,6 +9,8 @@ import { IAuthPayload } from "./schemas/context";
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: true,
+  includeStacktraceInErrorResponses: true,
 });
 
 const verifyToken = (token: string): IAuthPayload | undefined => {

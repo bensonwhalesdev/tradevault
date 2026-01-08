@@ -6,7 +6,7 @@ import User from "../../../models/user.model";
 import Wallet from "../../../models/wallet.model";
 import { connectDB } from "@/app/api/utils/connectdb";
 
-const JWT_SECRET = process.env.JWT_SECRET || "thisisaseceret";
+const JWT_SECRET = process.env.NEXT_JWT_SECRET || "thisisaseceret";
 
 export const userResolvers = {
   Query: {
@@ -21,6 +21,7 @@ export const userResolvers = {
           id: user._id,
           email: user.email,
           fullName: user.fullName,
+          role: user.role,
           createdAt: user.createdAt,
         };
       } catch (error: any) {
@@ -53,8 +54,13 @@ export const userResolvers = {
         });
         await newWallet.save();
 
-        return newUser;
+        return {
+          id: newUser._id.toString(),
+          email: newUser.email,
+          fullName: newUser.fullName,
+        };
       } catch (error: any) {
+        console.error("Registration error:", error);
         throw new Error(error.message || "Failed to register user");
       }
     },
@@ -73,14 +79,52 @@ export const userResolvers = {
         }
 
         const token = jwt.sign(
-          { _id: user._id, userId: user._id, email: user.email },
+          {
+            _id: user._id.toString(),
+            userId: user._id.toString(),
+            email: user.email,
+            role: user.role,
+          },
           JWT_SECRET,
           { expiresIn: "7d" }
         );
 
         return token;
       } catch (error: any) {
+        console.error("Login error:", error);
         throw new Error(error.message || "Failed to login");
+      }
+    },
+
+    updateUserBalance: async (
+      _: any,
+      { userId, amount }: any,
+      context: any
+    ) => {
+      try {
+        await connectDB();
+
+        // Check if user is authenticated and is an admin
+        if (!context.user) throw new Error("Not authenticated");
+        const adminUser = await User.findById(context.user.userId);
+        if (!adminUser || adminUser.role !== "admin") {
+          throw new Error("Only admins can update user balance");
+        }
+
+        // Find and update the target user's wallet
+        const wallet = await Wallet.findOneAndUpdate(
+          { userId },
+          { $set: { fiatBalance: amount } },
+          { new: true }
+        );
+
+        if (!wallet) {
+          throw new Error("Wallet not found for user");
+        }
+
+        return wallet;
+      } catch (error: any) {
+        throw new Error(error.message || "Failed to update user balance");
       }
     },
   },

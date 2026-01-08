@@ -26,10 +26,6 @@ export default function PaymentPage() {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
   const { user } = useMe();
-
-  // Replace with actual data from your Auth provider/user state
-//   const user = { name: "Tom Watfolio", email: "tom.viale@portfolio.com" };
-
   const amount = searchParams.get("amount") || "0";
   const crypto = searchParams.get("crypto") || "BTC";
   const address = wallets[crypto] || wallets["BTC"];

@@ -5,17 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  LayoutDashboard,
-  BarChart3,
-  Wallet,
-  History,
-  Settings,
-  LogOut,
-  Menu,
-  X,
-  CircleDollarSign,
-} from "lucide-react";
+import { LayoutDashboard, BarChart3, Wallet, History, Settings, LogOut, Menu,X, CircleDollarSign, } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useMe } from "../Hooks/useMe";
 
@@ -31,6 +21,11 @@ export default function HeaderBar() {
   const pathname = usePathname();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const { user } = useMe();
+
+  const handleLogout = async () => {
+    document.cookie = "token=; Max-Age=0; path=/; domain=" + window.location.hostname;
+    window.location.href = "/";
+  };
 
   // Common Nav Link Component
   const NavItem = ({
@@ -97,7 +92,9 @@ export default function HeaderBar() {
               </div>
             </Link>
 
-            <button className="p-2 text-red-500/70 hover:bg-red-500/10 hover:text-red-500 rounded-md transition-colors">
+            <button
+            onClick={handleLogout}
+            className="p-2 text-red-500/70 hover:bg-red-500/10 hover:text-red-500 rounded-md transition-colors">
               Logout
             </button>
           </div>
@@ -180,7 +177,9 @@ export default function HeaderBar() {
                   </div>
                 </Link>
 
-                <button className="w-full flex items-center h-12 px-4 rounded-xl text-red-500/70 hover:bg-red-500/10 hover:text-red-500">
+                <button
+                onClick={handleLogout}
+                className="w-full flex items-center h-12 px-4 rounded-xl text-red-500/70 hover:bg-red-500/10 hover:text-red-500">
                   <LogOut size={20} className="mr-3" />
                   <span className="text-sm font-semibold">Logout</span>
                 </button>

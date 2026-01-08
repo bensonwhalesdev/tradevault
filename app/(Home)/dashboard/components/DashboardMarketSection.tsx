@@ -2,7 +2,17 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, History, BarChart2, Star } from "lucide-react";
+import {
+  TrendingUp,
+  TrendingDown,
+  ArrowUpRight,
+  ArrowDownRight,
+  History,
+  BarChart2,
+  Star,
+} from "lucide-react";
+import { useBalanceHistory } from "../Hooks/useBalanceHistory";
+import { useWallet } from "../Hooks/useWallet";
 
 type Asset = {
   symbol: string;
@@ -15,29 +25,46 @@ export default function DashboardMarketSection() {
   const [watchlist, setWatchlist] = useState<Asset[]>([]);
   const [gainers, setGainers] = useState<Asset[]>([]);
   const [losers, setLosers] = useState<Asset[]>([]);
+  const { balanceHistory, currentBalance } = useBalanceHistory();
+  const { wallet } = useWallet();
+  console.log(wallet);
 
   const fetchMarketData = async () => {
     try {
       /* ------------------ CRYPTO ------------------ */
-      const cryptoRes = await axios.get( "https://api.coingecko.com/api/v3/coins/markets",
-        {
-          params: {
-            vs_currency: "usd",
-            ids: "bitcoin,ethereum,solana",
-          },
-        }
-      );
+      let crypto: Asset[] = [];
+      try {
+        const cryptoRes = await axios.get(
+          "https://api.coingecko.com/api/v3/coins/markets",
+          {
+            params: {
+              vs_currency: "usd",
+              ids: "bitcoin,ethereum,solana",
+            },
+          }
+        );
 
-      const crypto = cryptoRes.data.map((c: any) => ({
-        symbol: c.symbol.toUpperCase(),
-        name: c.name,
-        price: c.current_price,
-        change: c.price_change_percentage_24h,
-      }));
+        crypto = cryptoRes.data.map((c: any) => ({
+          symbol: c.symbol.toUpperCase(),
+          name: c.name,
+          price: c.current_price,
+          change: c.price_change_percentage_24h,
+        }));
+      } catch (cryptoErr) {
+        console.warn("Failed to fetch crypto data", cryptoErr);
+        // Continue with empty crypto array
+      }
 
       /* ------------------ STOCKS & FOREX (Server-side) ------------------ */
-      const marketRes = await axios.get("/api/market?type=all");
-      const { stocks = [], forex = [] } = marketRes.data;
+      let stocks: Asset[] = [];
+      let forex: Asset[] = [];
+      try {
+        const marketRes = await axios.get("/api/market?type=all");
+        stocks = marketRes.data.stocks || [];
+        forex = marketRes.data.forex || [];
+      } catch (marketErr) {
+        console.warn("Failed to fetch market data", marketErr);
+      }
 
       /* ------------------ MERGE ------------------ */
       const allAssets = [...crypto, ...stocks, ...forex];
@@ -63,15 +90,22 @@ export default function DashboardMarketSection() {
   return (
     <section className="grid grid-cols-1 xl:grid-cols-3 gap-8 mt-8">
       {/* WATCHLIST */}
-      <Card title="Watchlist" icon={<Star size={18} className="text-[#D4AF37]" />} >
+      <Card
+        title="Watchlist"
+        icon={<Star size={18} className="text-[#D4AF37]" />}
+      >
         {watchlist.map((asset) => (
           <Row key={asset.symbol}>
             <div>
               <p className="font-bold text-white">{asset.symbol}</p>
-              <p className="text-[10px] text-slate-500 uppercase">{asset.name} </p>
+              <p className="text-[10px] text-slate-500 uppercase">
+                {asset.name}{" "}
+              </p>
             </div>
             <div className="text-right">
-              <p className="font-bold text-white text-sm">${asset.price.toLocaleString()}</p>
+              <p className="font-bold text-white text-sm">
+                ${asset.price.toLocaleString()}
+              </p>
               <Change value={asset.change} />
             </div>
           </Row>
@@ -79,17 +113,26 @@ export default function DashboardMarketSection() {
       </Card>
 
       {/* TOP MOVERS */}
-      <Card title="Top Movers" icon={<BarChart2 size={18} className="text-[#D4AF37]" />} >
+      <Card
+        title="Top Movers"
+        icon={<BarChart2 size={18} className="text-[#D4AF37]" />}
+      >
         <div className="grid grid-cols-2 gap-3">
-          {gainers.map((asset) => ( <MiniCard key={asset.symbol} asset={asset} positive /> ))}
-          {losers.map((asset) => ( <MiniCard key={asset.symbol} asset={asset} /> ))}
+          {gainers.map((asset) => (
+            <MiniCard key={asset.symbol} asset={asset} positive />
+          ))}
+          {losers.map((asset) => (
+            <MiniCard key={asset.symbol} asset={asset} />
+          ))}
         </div>
       </Card>
 
       {/* ACTIVITY */}
-      <Card title="History" icon={<History size={18} className="text-[#D4AF37]" />} >
-        <Transaction title="Bought BTC" date="Dec 22, 2024" amount="- $6,420" />
-        <Transaction title="Sold AAPL" date="Dec 21, 2024" amount="+ $1,765" positive />
+      <Card
+        title="History"
+        icon={<History size={18} className="text-[#D4AF37]" />}
+      >
+        <p>$ {wallet?.fiatBalance}</p>
       </Card>
     </section>
   );
@@ -115,7 +158,10 @@ const Row = ({ children }: any) => (
 
 const Change = ({ value }: { value: number }) => (
   <div
-    className={`flex items-center gap-1 text-[11px] font-bold ${ value >= 0 ? "text-emerald-400" : "text-rose-400" }`} >
+    className={`flex items-center gap-1 text-[11px] font-bold ${
+      value >= 0 ? "text-emerald-400" : "text-rose-400"
+    }`}
+  >
     {value >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
     {value.toFixed(2)}%
   </div>
@@ -142,12 +188,23 @@ const MiniCard = ({ asset, positive }: any) => (
   </div>
 );
 
-const Transaction = ({ title, date, amount, positive }: any) => (
+const Transaction = ({ title, date, amount, change, positive }: any) => (
   <div className="flex justify-between bg-white/5 rounded-2xl p-4">
     <div>
       <p className="text-white font-bold text-sm">{title}</p>
       <p className="text-[10px] text-slate-500">{date}</p>
     </div>
-    <p className={positive ? "text-emerald-400" : "text-white"}>{amount}</p>
+    <div className="text-right">
+      <p
+        className={
+          positive
+            ? "text-emerald-400 text-sm font-bold"
+            : "text-rose-400 text-sm font-bold"
+        }
+      >
+        {change}
+      </p>
+      <p className="text-white text-xs">{amount}</p>
+    </div>
   </div>
 );

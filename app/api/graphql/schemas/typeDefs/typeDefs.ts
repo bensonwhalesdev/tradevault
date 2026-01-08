@@ -1,4 +1,4 @@
-import { gql } from 'graphql-tag';
+import { gql } from "graphql-tag";
 
 // --- Core Data Types ---
 const typeDefs = gql`
@@ -7,6 +7,7 @@ const typeDefs = gql`
     id: ID!
     email: String!
     fullName: String!
+    role: String!
     createdAt: String!
   }
 
@@ -69,7 +70,7 @@ const typeDefs = gql`
     status: String! # PENDING, COMPLETED, FAILED
     amount: Float!
     currency: String!
-    method: String! 
+    method: String!
     referenceId: String!
     createdAt: String!
   }
@@ -80,16 +81,14 @@ const typeDefs = gql`
   type Query {
     # Authentication & User
     me: User # Get the currently logged-in user
-    
+    getAllUsers: [User!]! # Get all users (admin only)
     # Wallet & Assets
     wallet: Wallet # Get the user's main wallet balance
     portfolio: [Asset!]! # Get all assets the user holds
-
     # Trading & History
     openOrders: [Order!]! # Get all currently open limit orders
     tradeHistory: [Order!]! # Get all filled/cancelled orders
     transactionHistory: [Transaction!]! # Get deposit/withdrawal history
-    
     # Mock Market Data (Since we are not using an external API)
     # We will need a way to mock the data for the frontend chart.
     livePrice(symbol: String!): Float! # Get current mock price for a symbol
@@ -101,11 +100,10 @@ const typeDefs = gql`
     # Auth
     register(email: String!, password: String!, fullName: String!): User!
     login(email: String!, password: String!): String! # Returns a JWT/Token
-
     # Wallet Management (Self-managed mock process)
     requestDeposit(amount: Float!, method: String!): Transaction!
     requestWithdrawal(amount: Float!, method: String!): Transaction!
-    
+
     # Trading
     placeOrder(
       assetSymbol: String!
@@ -116,8 +114,11 @@ const typeDefs = gql`
     ): Order!
 
     cancelOrder(orderId: ID!): Order!
+
+    # Admin Operations
+    updateUserBalance(userId: ID!, amount: Float!): Wallet!
   }
-  
+
   # The REAL-TIME operations (data pushing)
   type Subscription {
     # Real-time update for live charts
